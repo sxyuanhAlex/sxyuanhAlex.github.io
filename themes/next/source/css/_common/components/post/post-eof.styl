@@ -1,0 +1,13 @@
+.post-eof {
+  background: hsla(0,0%,100%,0);
+  height: 0px;
+  margin: $post-eof-margin-top auto $post-eof-margin-bottom;
+  text-align: center;
+  width: 8%;
+}
+
+article:last-child {
+  .post-eof {
+    display: none;
+  }
+}

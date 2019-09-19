@@ -1,0 +1,266 @@
+// Custom styles.
+// 主页文章添加阴影效果
+//.post-block {
+//   margin-top: 60px;
+//   margin-bottom: 60px;
+//   padding: 25px;
+//   -webkit-box-shadow: 0 0 5px rgba(202, 203, 203, .5);
+//   -moz-box-shadow: 0 0 5px rgba(202, 203, 204, .5);
+//  }
+
+
+/*适配ipad和1366*768的笔记本电脑的宽度*/
+@media(min-width: 1000px){
+  .container .main-inner{
+    width: 900px;
+  }
+}
+
+.post-spread{
+  margin-bottom: 20px;
+}
+
+
+//隐藏社交图标前的圆点
+.links-of-author a,
+.links-of-author .exturl {
+  &:before {
+    display: none;
+  }
+}
+
+
+/*首页阅读全文样式*/
+.post-button .btn {
+  color: #555;
+  background-color: rgb(255, 255, 255);
+  border-radius: 3px;
+  font-size: 15px;
+  box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, 0.35);
+  border: none !important;
+  transition-property: unset;
+  padding: 0px 15px;
+  margin: inherit;
+}
+.post-button .btn:hover {
+  color: rgb(255, 255, 255);
+  border-radius: 3px;
+  font-size: 15px;
+  box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, 0.35);
+  background-image: linear-gradient(90deg, #a166ab 0%, #ef4e7b 25%, #f37055 50%, #ef4e7b 75%, #a166ab 100%);
+  margin: inherit;
+}
+.post-button a{
+  border-bottom: 1px solid #666;
+}
+.post-button a:hover {
+  color: #7784ba;
+}
+
+
+
+//菜单分类显示数字
+.menu .menu-item .badge {
+    display: inline-block;
+    padding: 0.1em 0.4em;
+    margin-left: 5px;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #a9a6a654;
+}
+
+.posts-expand .post-title-link {
+    display: inline-block;
+    position: relative;
+    color: #575757; // 文章标题颜色
+    border-bottom: none;
+    line-height: 1.2;
+    vertical-align: top;
+}
+
+// 文章标题动态效果 next/source/css/_common/components/post/post-title.styl中.posts-expand .post-title-link确保`position: relative;`属性存在, 如果需要标题呈现链接效果颜色, 将`color`元素去除即可
+.posts-expand .post-title-link::before {
+    background-image: linear-gradient(90deg, #a166ab 0%, #ef4e7b 25%, #f37055 50%, #ef4e7b 75%, #a166ab 100%);
+}
+
+//body {
+//    background:url(https://i.loli.net/2019/08/02/5d43c6f0b266178355.jpeg);
+//    background-repeat: no-repeat;
+//    background-attachment:fixed;
+//    background-position:50% 50%;
+//    background-size: cover;
+//    -webkit-background-size: cover;
+//    -o-background-size: cover;
+//    -moz-background-size: cover;
+//    -ms-background-size: cover;
+//
+    /*这是设置底部文字, 看个人需要修改*/
+//#footer > div > div {    
+//        color:#EE1289;
+//    }
+//}
+
+//改变背景色和透明度等
+//.main-inner {
+//background: rgba(0, 0, 0, 0.75);
+//padding: 3.5em; //博文边框
+//opacity: 1; //整体透明度，包括字体
+//border-radius: 1em; //边框圆角
+//}
+
+
+//博文列表内大框样式
+.post-block {
+  width: 100%;
+  margin-top: 1em; //距离顶部
+  margin-bottom: 3em; //距离下一篇文章顶部距离
+  padding: 1em; //预览文字内缩距离
+  -webkit-box-shadow: 0 0 0.5em rgba(202, 203, 203, .5); // 边框渐变线样式
+ }
+
+
+.site-author-name {
+  margin: 18px 0 0;
+  color: #090909;
+  font-family: 'Comic Sans MS', sans-serif;
+}
+.links-of-blogroll {
+  font-size: 13px;
+  margin-bottom: 32px;
+}
+
+.links-of-author {
+  margin-top: 10px;
+}
+.site-overview {
+  text-align: center;
+}
+.sidebar-inner {
+  color: #649ab6;
+}
+.site-author-name{
+  color: #649ab6;
+  font-weight: bold;
+}
+
+.sidebar {
+  box-shadow: inset 2px 2px 40px #bdb2b2;
+}
+.sidebar a {
+  color: #649ab6;
+  border-bottom-color: #649ab6;
+  border-bottom: none;
+}
+.sidebar a:hover {
+  color: #0c0b0b;
+}
+.site-state-item {
+  display: inline-block;
+  padding: 8px 18px;
+  border-left: 1px solid #649ab6;
+}
+.sidebar-nav .sidebar-nav-active {
+  color: #649ab6;
+  border-bottom-color: #649ab6;
+}
+.sidebar-nav li:hover {
+  color: #0c0b0b;
+}
+
+/*文章页内标签样式*/
+.posts-expand .post-tags {
+  margin: 40px 10px 0 10px;
+  text-align: center;
+}
+
+.posts-expand .post-tags a {
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  font-family: 'Comic Sans MS', sans-serif;
+  transition: 0.2s ease-out;
+  padding: 3px 5px;
+  margin: 5px;
+  background: #f5f5f5;
+  border-bottom: none;
+  border-radius: 15px;
+
+  &:hover {
+  background: rgba(100,154,182,0.902);
+  color: #fff;
+  -webkit-box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  -moz-box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  }
+}
+
+
+/*标签云*/
+div#posts.posts-expand .tag-cloud a{
+  background-color: #f5f7f1;
+  border-radius: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 18px;
+  color: #000;
+
+}
+
+.tag-cloud a{
+  background-color: #f5f7f1;
+  border-radius: 4px;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin-right: 5px;
+  margin-left: 0px;
+  color: #000;
+  margin-top: 8px;
+  margin-bottom: 0px;
+
+}
+
+.tag-cloud a:before{
+     content: "🔖";
+}
+
+.tag-cloud-tags{
+  /*font-family: Helvetica, Tahoma, Arial;*/
+  font-weight: 100;
+  text-align: left;
+  counter-reset: tags;
+}
+
+
+
+
+/*back-to-top按钮美化*/
+.back-to-top.back-to-top-on {
+    bottom: unset;
+    top: calc(100vh - 900px - 200px);
+}
+
+.back-to-top {
+    width: 70px;
+    height: 360px;
+    top: -900px;
+    bottom: unset;
+    transition: all 0.5s ease-in-out;
+    background: url("https://site-1258928558.cos.ap-guangzhou.myqcloud.com/scroll.png");
+}
+
+.back-to-top {
+    box-sizing: border-box;
+    position: fixed;
+    z-index: 1050;
+    padding: 0 6px;
+    font-size: 12px;
+    opacity: 1;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+ }
+
+
+ 
