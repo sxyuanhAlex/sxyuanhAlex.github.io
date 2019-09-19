@@ -4,7 +4,7 @@
 
 # Site
 title: ⎝浪子yuanh⎠
-subtitle: 我不知道我是喜欢你，还是需要一个影子放在心里让我喜欢
+subtitle: 工欲善其事，必先利其器
 description:
 keywords:
 author: Eric
@@ -13,7 +13,7 @@ timezone: Asia/Shanghai
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: http://sxyuanhAlex.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -108,6 +108,10 @@ live2d:
     # use: wanko # 博客根目录/live2d_models/ 下的目录名
     # use: ./wives/wanko # 相对于博客根目录的路径
     # use: https://cdn.jsdelivr.net/npm/live2d-widget-model-wanko@1.0.5/assets/wanko.model.json # 你的自定义 url
+  display:
+    position: left
+  mobile:
+    show: false
 
 
 
