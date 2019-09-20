@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+
+  <meta name="google-site-verification" content="Mwh8vAvHhlj1-DfVVYxEdQNAjYQoRquV3CQ8a6X8fA8" />
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.0" color="#222">
+  <meta name="google-site-verification" content="true">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.0">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|ZCOOL KuaiLe:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.0',
+    exturl: false,
+    sidebar: {"position":"right","mobile":{"show":true},"display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+
+
+
+  <meta name="description" content="源码剖析Django REST framework的认证方式及自定义认证源码剖析Django REST framework的认证方式由Django的CBV模式流程，可以知道在url匹配完成后，会执行自定义的类中的as_view方法。如果自定义的类中没有定义as_view方法，根据面向对象中类的继承可以知道，则会执行其父类View中的as_view方法">
+<meta name="keywords" content="Django">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Django REST framework的认证方式及自定义认证">
+<meta property="og:url" content="http://sxyuanhAlex.github.io/2019/09/18/Django REST framework的认证方式及自定义认证/index.html">
+<meta property="og:site_name" content="⎝浪子yuanh⎠">
+<meta property="og:description" content="源码剖析Django REST framework的认证方式及自定义认证源码剖析Django REST framework的认证方式由Django的CBV模式流程，可以知道在url匹配完成后，会执行自定义的类中的as_view方法。如果自定义的类中没有定义as_view方法，根据面向对象中类的继承可以知道，则会执行其父类View中的as_view方法">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://sxyuanhalex.github.io/images/Django%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B.jpg">
+<meta property="og:updated_time" content="2019-09-18T02:29:35.240Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Django REST framework的认证方式及自定义认证">
+<meta name="twitter:description" content="源码剖析Django REST framework的认证方式及自定义认证源码剖析Django REST framework的认证方式由Django的CBV模式流程，可以知道在url匹配完成后，会执行自定义的类中的as_view方法。如果自定义的类中没有定义as_view方法，根据面向对象中类的继承可以知道，则会执行其父类View中的as_view方法">
+<meta name="twitter:image" content="http://sxyuanhalex.github.io/images/Django%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B.jpg">
+  <link rel="canonical" href="http://sxyuanhAlex.github.io/2019/09/18/Django REST framework的认证方式及自定义认证/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Django REST framework的认证方式及自定义认证 | ⎝浪子yuanh⎠</title>
+
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">⎝浪子yuanh⎠</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">工欲善其事，必先利其器</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://sxyuanhAlex.github.io/2019/09/18/Django REST framework的认证方式及自定义认证/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Eric">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="⎝浪子yuanh⎠">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Django REST framework的认证方式及自定义认证
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-18 10:00:00 / 修改时间：10:29:35" itemprop="dateCreated datePublished" datetime="2019-09-18T10:00:00+08:00">2019-09-18</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span id="/2019/09/18/Django REST framework的认证方式及自定义认证/" class="post-meta-item leancloud_visitors" data-flag-title="Django REST framework的认证方式及自定义认证" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/09/18/Django REST framework的认证方式及自定义认证/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2019/09/18/Django REST framework的认证方式及自定义认证/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>13k</span>
+            </span>
+          
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              
+              <span>12 分钟</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="源码剖析Django-REST-framework的认证方式及自定义认证"><a href="#源码剖析Django-REST-framework的认证方式及自定义认证" class="headerlink" title="源码剖析Django REST framework的认证方式及自定义认证"></a>源码剖析Django REST framework的认证方式及自定义认证</h1><h2 id="源码剖析Django-REST-framework的认证方式"><a href="#源码剖析Django-REST-framework的认证方式" class="headerlink" title="源码剖析Django REST framework的认证方式"></a>源码剖析Django REST framework的认证方式</h2><p>由Django的CBV模式流程，可以知道在<code>url匹配完成后，会执行自定义的类中的as_view方法</code>。</p><p>如果自定义的类中没有定义<code>as_view方法</code>，根据面向对象中类的继承可以知道，则<code>会执行其父类View中的as_view方法</code></p><a id="more"></a>
+
+<p><code>在Django的View的as_view方法中，又会调用dispatch方法</code>。</p>
+<p>现在来看看Django restframework的认证流程</p>
+<blockquote>
+<p>Django restframework是基于Django的框架，所以基于CBV的模式也会执行自定义的类中的as_view方法</p>
+</blockquote>
+<p>先新建一个项目，配置url</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^user/'</span>, views.UserView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>views.py文件内容</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render,HttpResponse</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserView</span><span class="params">(APIView)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        print(request.__dict__)</span><br><span class="line">        print(request.user)</span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"UserView GET"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"UserView POST"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>启动项目，用浏览器向<code>http://127.0.0.1:8000/user/</code>发送get请求</p>
+<p>可以知道请求发送成功。现在来看看源码流程，由于UserView继承APIView，查看APIView中的as_view方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">APIView</span><span class="params">(View)</span>:</span></span><br><span class="line">    ...</span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">as_view</span><span class="params">(cls, **initkwargs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> isinstance(getattr(cls, <span class="string">'queryset'</span>, <span class="literal">None</span>), models.query.QuerySet):</span><br><span class="line">            <span class="function"><span class="keyword">def</span> <span class="title">force_evaluation</span><span class="params">()</span>:</span></span><br><span class="line">                <span class="keyword">raise</span> RuntimeError(</span><br><span class="line">                    <span class="string">'Do not evaluate the `.queryset` attribute directly, '</span></span><br><span class="line">                    <span class="string">'as the result will be cached and reused between requests. '</span></span><br><span class="line">                    <span class="string">'Use `.all()` or call `.get_queryset()` instead.'</span></span><br><span class="line">                )</span><br><span class="line">            cls.queryset._fetch_all = force_evaluation</span><br><span class="line"></span><br><span class="line">        view = super(APIView, cls).as_view(**initkwargs)</span><br><span class="line">        view.cls = cls</span><br><span class="line">        view.initkwargs = initkwargs</span><br><span class="line">        <span class="keyword">return</span> csrf_exempt(view)</span><br></pre></td></tr></table></figure>
+
+<p><code>通过super来执行APIView的父类Django的View中的as_view方法</code>。上一篇文章<a href="https://www.cnblogs.com/renpingsheng/p/9531649.html" target="_blank" rel="noopener">源码解析Django CBV的本质</a>中已经知道，View类的as_view方法会调用dispatch方法。</p>
+<p>View类的as_view方法源码如下所示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">View</span><span class="params">(object)</span>:</span></span><br><span class="line">    ...</span><br><span class="line"><span class="meta">    @classonlymethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">as_view</span><span class="params">(cls, **initkwargs)</span>:</span></span><br><span class="line">        ...</span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">view</span><span class="params">(request, *args, **kwargs)</span>:</span></span><br><span class="line">            self = cls(**initkwargs)</span><br><span class="line">            <span class="keyword">if</span> hasattr(self, <span class="string">'get'</span>) <span class="keyword">and</span> <span class="keyword">not</span> hasattr(self, <span class="string">'head'</span>):</span><br><span class="line">                self.head = self.get</span><br><span class="line">            self.request = request</span><br><span class="line">            self.args = args</span><br><span class="line">            self.kwargs = kwargs</span><br><span class="line">            <span class="keyword">return</span> self.dispatch(request, *args, **kwargs)</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+
+<p><code>as_view方法中的self实际上指的是自定义的UserView这个类</code>，上面的代码会执行UserView类中dispatch方法。</p>
+<p>由于UserView类中并没有定义dispatch方法，而UserView类继承自Django restframework的APIView类，所以会执行APIView类中的dispatch方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dispatch</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">    self.args = args</span><br><span class="line">    self.kwargs = kwargs</span><br><span class="line">    request = self.initialize_request(request, *args, **kwargs)</span><br><span class="line">    self.request = request</span><br><span class="line">    self.headers = self.default_response_headers  <span class="comment"># deprecate?</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        self.initial(request, *args, **kwargs)</span><br><span class="line">        <span class="keyword">if</span> request.method.lower() <span class="keyword">in</span> self.http_method_names:</span><br><span class="line">            handler = getattr(self, request.method.lower(),</span><br><span class="line">                              self.http_method_not_allowed)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            handler = self.http_method_not_allowed</span><br><span class="line"></span><br><span class="line">        response = handler(request, *args, **kwargs)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> exc:</span><br><span class="line">        response = self.handle_exception(exc)</span><br><span class="line"></span><br><span class="line">    self.response = self.finalize_response(request, response, *args, **kwargs)</span><br><span class="line">    <span class="keyword">return</span> self.response</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，<code>先执行initialize_request方法处理浏览器发送的request请求</code>。</p>
+<p>来看看initialize_request方法的源码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initialize_request</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Returns the initial request object.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    parser_context = self.get_parser_context(request)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Request(</span><br><span class="line">        request,</span><br><span class="line">        parsers=self.get_parsers(),</span><br><span class="line">        authenticators=self.get_authenticators(),</span><br><span class="line">        negotiator=self.get_content_negotiator(),</span><br><span class="line">        parser_context=parser_context</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<p>在initialize_request方法里，把浏览器发送的request和restframework的处理器，认证，选择器等对象列表作为参数实例化Request类中得到新的request对象并返回，其中跟认证相关的对象就是authenticators。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_authenticators</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Instantiates and returns the list of authenticators that this view can use.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">return</span> [auth() <span class="keyword">for</span> auth <span class="keyword">in</span> self.authentication_classes]</span><br></pre></td></tr></table></figure>
+
+<p><code>get_authenticators方法通过列表生成式得到一个列表，列表中包含认证类实例化后的对象</code></p>
+<p>在这里，<code>authentication_classes来自于api_settings的配置</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">authentication_classes = api_settings.DEFAULT_AUTHENTICATION_CLASSES</span><br></pre></td></tr></table></figure>
+
+<p>通过查看api_settings的源码可以知道，可以在项目的settings.py文件中进行认证相关的配置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">api_settings = APISettings(<span class="literal">None</span>, DEFAULTS, IMPORT_STRINGS)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reload_api_settings</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">    setting = kwargs[<span class="string">'setting'</span>]</span><br><span class="line">    <span class="keyword">if</span> setting == <span class="string">'REST_FRAMEWORK'</span>:</span><br><span class="line">        api_settings.reload()</span><br></pre></td></tr></table></figure>
+
+<p>Django restframework通过initialize_request方法对原始的request进行一些封装后实例化得到新的request对象</p>
+<p>然后执行initial方法来处理新得到的request对象，再来看看initial方法中又执行了哪些操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initial</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">    self.format_kwarg = self.get_format_suffix(**kwargs)</span><br><span class="line">    neg = self.perform_content_negotiation(request)</span><br><span class="line">    request.accepted_renderer, request.accepted_media_type = neg</span><br><span class="line"></span><br><span class="line">    version, scheme = self.determine_version(request, *args, **kwargs)</span><br><span class="line">    request.version, request.versioning_scheme = version, scheme</span><br><span class="line"></span><br><span class="line">    self.perform_authentication(request)</span><br><span class="line">    self.check_permissions(request)</span><br><span class="line">    self.check_throttles(request)</span><br></pre></td></tr></table></figure>
+
+<p>由上面的源码可以知道，在initial方法中，<code>执行perform_authentication来对request对象进行认证操作</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">perform_authentication</span><span class="params">(self, request)</span>:</span></span><br><span class="line">    request.user</span><br></pre></td></tr></table></figure>
+
+<p><code>perform_authentication方法中调用执行request中的user方法</code>，<code>这里的request是封装了原始request,认证对象列表，处理器列表等之后的request对象</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Request</span><span class="params">(object)</span>:</span></span><br><span class="line">    ...</span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">user</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        Returns the user associated with the current request, as authenticated</span></span><br><span class="line"><span class="string">        by the authentication classes provided to the request.</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> hasattr(self, <span class="string">'_user'</span>):</span><br><span class="line">            <span class="keyword">with</span> wrap_attributeerrors():</span><br><span class="line">                self._authenticate()</span><br><span class="line">        <span class="keyword">return</span> self._user</span><br></pre></td></tr></table></figure>
+
+<p>从request中获取<code>_user</code>的值，如果获取到则执行<code>_authenticate方法</code>，否则返回<code>_user</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">def _authenticate(self):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    Attempt to authenticate the request using each authentication instance</span><br><span class="line">    in turn.</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    for authenticator in self.authenticators:</span><br><span class="line">        try:</span><br><span class="line">            user_auth_tuple = authenticator.authenticate(self)</span><br><span class="line">        except exceptions.APIException:</span><br><span class="line">            self._not_authenticated()</span><br><span class="line">            raise</span><br><span class="line"></span><br><span class="line">        if user_auth_tuple is not None:</span><br><span class="line">            self._authenticator = authenticator</span><br><span class="line">            self.user, self.auth = user_auth_tuple</span><br><span class="line">            return</span><br></pre></td></tr></table></figure>
+
+<p>在这里<code>self.authenticators</code>实际上是<code>get_authenticators</code>方法执行完成后返回的对象列表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Request</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, request, parsers=None, authenticators=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                 negotiator=None, parser_context=None)</span>:</span></span><br><span class="line">        <span class="keyword">assert</span> isinstance(request, HttpRequest), (</span><br><span class="line">            <span class="string">'The `request` argument must be an instance of '</span></span><br><span class="line">            <span class="string">'`django.http.HttpRequest`, not `&#123;&#125;.&#123;&#125;`.'</span></span><br><span class="line">            .format(request.__class__.__module__, request.__class__.__name__)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        self._request = request</span><br><span class="line">        self.parsers = parsers <span class="keyword">or</span> ()</span><br><span class="line">        self.authenticators = authenticators <span class="keyword">or</span> ()</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+
+<p>循环认证的对象列表,<code>执行每一个认证方法的类中的authenticate方法</code>，得到通过认证的用户及用户的口令的元组，并返回元组完成认证的流程</p>
+<p>在<code>_authenticate</code>方法中使用了try/except方法来捕获authenticate方法可能出现的异常</p>
+<p>如果出现异常,就调用<code>_not_authenticated</code>方法来设置返回元组中的用户及口令并终止程序继续运行</p>
+<p>总结，Django restframework的认证流程如下图</p>
+<p><img src="/images/Django%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B.jpg" alt></p>
+<h2 id="Django-restframework内置的认证类"><a href="#Django-restframework内置的认证类" class="headerlink" title="Django restframework内置的认证类"></a>Django restframework内置的认证类</h2><p>在上面的项目例子中，在UsersView的get方法中，打印<code>authentication_classes</code>和<code>request._user</code>的值</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    <span class="comment"># authentication_classes = [MyAuthentication,]</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line">        print(<span class="string">'authentication_classes:'</span>, self.authentication_classes)</span><br><span class="line">        print(request._user)</span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"UserView GET"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>打印结果为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">authentication_classes: [&lt;class 'rest_framework.authentication.SessionAuthentication'&gt;, &lt;class 'rest_framework.authentication.BasicAuthentication'&gt;]</span><br><span class="line">AnonymousUser</span><br></pre></td></tr></table></figure>
+
+<p>由此可以知道,<code>authentication_classes</code>默认是Django restframework内置的认证类，而request._user为AnonymousUser,因为发送GET请求，用户没有进行登录认证，所以为匿名用户</p>
+<p>在视图函数中导入这两个类,再查看这两个类的源码,可以知道</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BasicAuthentication</span><span class="params">(BaseAuthentication)</span>:</span></span><br><span class="line"></span><br><span class="line">    www_authenticate_realm = <span class="string">'api'</span> </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate</span><span class="params">(self, request)</span>:</span></span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate_credentials</span><span class="params">(self, userid, password)</span>:</span></span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SessionAuthentication</span><span class="params">(BaseAuthentication)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate</span><span class="params">(self, request)</span>:</span></span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">enforce_csrf</span><span class="params">(self, request)</span>:</span></span><br><span class="line"></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TokenAuthentication</span><span class="params">(BaseAuthentication)</span>:</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<p>从上面的源码可以发现,这个文件中不仅定义了<code>SessionAuthentication</code>和<code>BasicAuthentication</code>这两个类,</p>
+<p>相关的类还有<code>TokenAuthentication</code>,而且这三个认证相关的类都是继承自<code>BaseAuthentication</code>类</p>
+<p>从上面的源码可以大概知道,这三个继承自<code>BaseAuthentication</code>的类是Django restframework内置的认证方式.</p>
+<h2 id="自定义认证功能"><a href="#自定义认证功能" class="headerlink" title="自定义认证功能"></a>自定义认证功能</h2><p>在上面我们知道,Request会调用认证相关的类及方法,<code>APIView</code>会设置认证相关的类及方法</p>
+<p>所以如果想自定义认证功能,只需要重写<code>authenticate</code>方法及<code>authentication_classes</code>的对象列表即可</p>
+<p>修改上面的例子的views.py文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render, HttpResponse</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.authentication <span class="keyword">import</span> BaseAuthentication</span><br><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> exceptions</span><br><span class="line"></span><br><span class="line">TOKEN_LIST = [  <span class="comment"># 定义token_list</span></span><br><span class="line">    <span class="string">'aabbcc'</span>,</span><br><span class="line">    <span class="string">'ddeeff'</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserAuthView</span><span class="params">(BaseAuthentication)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        tk = request._request.GET.get(<span class="string">"tk"</span>)  <span class="comment"># request._request为原生的request</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> tk <span class="keyword">in</span> TOKEN_LIST:</span><br><span class="line">            <span class="keyword">return</span> (tk, <span class="literal">None</span>)  <span class="comment"># 返回一个元组</span></span><br><span class="line">        <span class="keyword">raise</span> exceptions.AuthenticationFailed(<span class="string">"用户认证失败"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate_header</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="comment"># 如果不定义authenticate_header方法会抛出异常</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    authentication_classes = [UserAuthView, ]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        print(request.user)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"UserView GET"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>启动项目,在浏览器中输入<code>http://127.0.0.1:8000/users/?tk=aabbcc</code>,然后回车,在服务端后台会打印</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aabbcc</span><br></pre></td></tr></table></figure>
+
+<p>把浏览器中的url换为<code>http://127.0.0.1:8000/users/?tk=ddeeff</code>,后台打印信息则变为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ddeeff</span><br></pre></td></tr></table></figure>
+
+<p>这样就实现REST framework的自定义认证功能</p>
+<h2 id="Django-restframework认证的扩展"><a href="#Django-restframework认证的扩展" class="headerlink" title="Django restframework认证的扩展"></a>Django restframework认证的扩展</h2><h3 id="基于Token进行用户认证"><a href="#基于Token进行用户认证" class="headerlink" title="基于Token进行用户认证"></a>基于Token进行用户认证</h3><p>修改上面的项目，在urls.py文件中添加一条路由记录</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.conf.urls <span class="keyword">import</span> url</span><br><span class="line"><span class="keyword">from</span> django.contrib <span class="keyword">import</span> admin</span><br><span class="line"><span class="keyword">from</span> app01 <span class="keyword">import</span> views</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="string">r'^admin/'</span>, admin.site.urls),</span><br><span class="line">    url(<span class="string">r'^users/'</span>,views.UsersView.as_view()),</span><br><span class="line">    url(<span class="string">r'^auth/'</span>,views.AuthView.as_view()),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>修改视图函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.shortcuts <span class="keyword">import</span> render,HttpResponse</span><br><span class="line"><span class="keyword">from</span> rest_framework.views <span class="keyword">import</span> APIView</span><br><span class="line"><span class="keyword">from</span> rest_framework.authentication <span class="keyword">import</span> BaseAuthentication</span><br><span class="line"><span class="keyword">from</span> rest_framework <span class="keyword">import</span> exceptions</span><br><span class="line"><span class="keyword">from</span> django.http <span class="keyword">import</span> JsonResponse</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gen_token</span><span class="params">(username)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    利用时间和用户名生成用户token</span></span><br><span class="line"><span class="string">    :param username: </span></span><br><span class="line"><span class="string">    :return: </span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">import</span> time</span><br><span class="line">    <span class="keyword">import</span> hashlib</span><br><span class="line">    ctime=str(time.time())</span><br><span class="line">    hash=hashlib.md5(username.encode(<span class="string">"utf-8"</span>))</span><br><span class="line">    hash.update(ctime.encode(<span class="string">"utf-8"</span>))</span><br><span class="line">    <span class="keyword">return</span> hash.hexdigest()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AuthView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">post</span><span class="params">(self, request, *args, **kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        获取用户提交的用户名和密码，如果用户名和密码正确，则生成token，并返回给用户</span></span><br><span class="line"><span class="string">        :param request:</span></span><br><span class="line"><span class="string">        :param args:</span></span><br><span class="line"><span class="string">        :param kwargs:</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        res = &#123;<span class="string">'code'</span>: <span class="number">1000</span>, <span class="string">'msg'</span>: <span class="literal">None</span>&#125;</span><br><span class="line">        user = request.data.get(<span class="string">"user"</span>)</span><br><span class="line">        pwd = request.data.get(<span class="string">"pwd"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">from</span> app01 <span class="keyword">import</span> models</span><br><span class="line">        user_obj = models.UserInfo.objects.filter(user=user, pwd=pwd).first()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> user_obj:</span><br><span class="line">            token = gen_token(user) <span class="comment"># 生成用户口令</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># 如果数据库中存在口令则更新,如果数据库中不存在口令则创建用户口令</span></span><br><span class="line">            models.Token.objects.update_or_create(user=user_obj, defaults=&#123;<span class="string">'token'</span>: token&#125;)</span><br><span class="line">            print(<span class="string">"user_token:"</span>, token)</span><br><span class="line">            res[<span class="string">'code'</span>] = <span class="number">1001</span></span><br><span class="line">            res[<span class="string">'token'</span>] = token</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            res[<span class="string">'msg'</span>] = <span class="string">"用户名或密码错误"</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> JsonResponse(res)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserAuthView</span><span class="params">(BaseAuthentication)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate</span><span class="params">(self,request)</span>:</span></span><br><span class="line">        tk=request.query_params.GET.get(<span class="string">"tk"</span>)   <span class="comment"># 获取请求头中的用户token</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">from</span> app01 <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line">        token_obj=models.Token.objects.filter(token=tk).first()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> token_obj:   <span class="comment"># 用户数据库中已经存在用户口令返回认证元组</span></span><br><span class="line">            <span class="keyword">return</span> (token_obj.user,token_obj)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">raise</span> exceptions.AuthenticationFailed(<span class="string">"认证失败"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">authenticate_header</span><span class="params">(self,request)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UsersView</span><span class="params">(APIView)</span>:</span></span><br><span class="line">    authentication_classes = [UserAuthView,]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span><span class="params">(self,request,*args,**kwargs)</span>:</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> HttpResponse(<span class="string">"....."</span>)</span><br></pre></td></tr></table></figure>
+
+<p>创建用户数据库的类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> models</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserInfo</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    user=models.CharField(max_length=<span class="number">32</span>)</span><br><span class="line">    pwd=models.CharField(max_length=<span class="number">64</span>)</span><br><span class="line">    email=models.CharField(max_length=<span class="number">64</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Token</span><span class="params">(models.Model)</span>:</span></span><br><span class="line">    user=models.OneToOneField(UserInfo)</span><br><span class="line">    token=models.CharField(max_length=<span class="number">64</span>)</span><br></pre></td></tr></table></figure>
+
+<p>创建数据库,并添加两条用户记录</p>
+<p>再创建一个test_client.py文件,来发送post请求</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">response=requests.post(</span><br><span class="line">    url=<span class="string">"http://127.0.0.1:8000/auth/"</span>,</span><br><span class="line">    data=&#123;<span class="string">'user'</span>:<span class="string">'user1'</span>,<span class="string">'pwd'</span>:<span class="string">'user123'</span>&#125;,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"response_text:"</span>,response.text)</span><br></pre></td></tr></table></figure>
+
+<p>启动Django项目,运行test_client.py文件,则项目的响应信息为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">response_text: &#123;<span class="string">"code"</span>: <span class="number">1001</span>, <span class="string">"msg"</span>: null, <span class="string">"token"</span>: <span class="string">"eccd2d256f44cb25b58ba602fe7eb42d"</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此,就完成了自定义的基于token的用户认证</p>
+<p>如果想在项目中使用自定义的认证方式时,可以在<code>authentication_classes</code>继承刚才的认证的类即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">authentication_classes = [UserAuthView,APIViiew]</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Eric</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://sxyuanhAlex.github.io/2019/09/18/Django REST framework的认证方式及自定义认证/" title="Django REST framework的认证方式及自定义认证">http://sxyuanhAlex.github.io/2019/09/18/Django REST framework的认证方式及自定义认证/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/Django/" rel="tag">🔖 Django</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/09/05/Pycharm快捷键/" rel="next" title="Pycharm快捷键">
+                  <i class="fa fa-chevron-left"></i> Pycharm快捷键
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#源码剖析Django-REST-framework的认证方式及自定义认证"><span class="nav-number">1.</span> <span class="nav-text">源码剖析Django REST framework的认证方式及自定义认证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#源码剖析Django-REST-framework的认证方式"><span class="nav-number">1.1.</span> <span class="nav-text">源码剖析Django REST framework的认证方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Django-restframework内置的认证类"><span class="nav-number">1.2.</span> <span class="nav-text">Django restframework内置的认证类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义认证功能"><span class="nav-number">1.3.</span> <span class="nav-text">自定义认证功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Django-restframework认证的扩展"><span class="nav-number">1.4.</span> <span class="nav-text">Django restframework认证的扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于Token进行用户认证"><span class="nav-number">1.4.1.</span> <span class="nav-text">基于Token进行用户认证</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/avatar.jpg"
+      alt="Eric">
+  <p class="site-author-name" itemprop="name">Eric</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/sxyuanhAlex" title="GitHub &rarr; https://github.com/sxyuanhAlex" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="mailto:alexcoobi@gmail.com" title="E-Mail &rarr; mailto:alexcoobi@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://www.instagram.com/alex_yuanh/" title="Instagram &rarr; https://www.instagram.com/alex_yuanh/" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+      <script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=5r913oycw3y&amp;m=0c&amp;c=9d8b63&amp;cr1=0006ff&amp;f=arial&amp;l=33&amp;s=170&amp;cw=ffffff&amp;cb=000000" async="async"></script>
+
+      <!--div id="music163player">
+      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=110 src="//music.163.com/outchain/player?type=0&id=2983866105&auto=1&height=90"></iframe>
+      </div-->
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-fas fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Eric</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">17k</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+  
+  <script>
+  function leancloudSelector(url) {
+    return document.getElementById(url).querySelector('.leancloud-visitors-count');
+  }
+  if (CONFIG.page.isPost) {
+    function addCount(Counter) {
+      var visitors = document.querySelector('.leancloud_visitors');
+      var url = visitors.getAttribute('id').trim();
+      var title = visitors.getAttribute('data-flag-title').trim();
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length > 0) {
+            var counter = results[0];
+            Counter('put', '/classes/Counter/' + counter.objectId, { time: { '__op': 'Increment', 'amount': 1 } })
+              .then(response => response.json())
+              .then(() => {
+                leancloudSelector(url).innerText = counter.time + 1;
+              })
+            
+              .catch(error => {
+                console.log('Failed to save visitor count', error);
+              })
+          } else {
+              Counter('post', '/classes/Counter', { title: title, url: url, time: 1 })
+                .then(response => response.json())
+                .then(() => {
+                  leancloudSelector(url).innerText = 1;
+                })
+                .catch(error => {
+                  console.log('Failed to create', error);
+                });
+            
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  } else {
+    function showTime(Counter) {
+      var visitors = document.querySelectorAll('.leancloud_visitors');
+      var entries = [...visitors].map(element => {
+        return element.getAttribute('id').trim();
+      });
+
+      Counter('get', `/classes/Counter?where=${JSON.stringify({ url: { '$in': entries } })}`)
+        .then(response => response.json())
+        .then(({ results }) => {
+          if (results.length === 0) {
+            document.querySelectorAll('.leancloud_visitors .leancloud-visitors-count').forEach(element => {
+              element.innerText = 0;
+            });
+            return;
+          }
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.url;
+            var time = item.time;
+            leancloudSelector(url).innerText = time;
+          }
+          for (var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = leancloudSelector(url);
+            if (element.innerText == '') {
+              element.innerText = 0;
+            }
+          }
+        })
+        .catch(error => {
+          console.log('LeanCloud Counter Error', error);
+        });
+    }
+  }
+
+  fetch('https://app-router.leancloud.cn/2/route?appId=rSJhP9lveekSUd49eUD4mYEV-gzGzoHsz')
+    .then(response => response.json())
+    .then(({ api_server }) => {
+      var Counter = (method, url, data) => {
+        return fetch(`https://${api_server}/1.1${url}`, {
+          method: method,
+          headers: {
+            'X-LC-Id': 'rSJhP9lveekSUd49eUD4mYEV-gzGzoHsz',
+            'X-LC-Key': 'lpRyKNs8gvdHGVDEdP3IBEAL',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      if (CONFIG.page.isPost) {
+        const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+        if (localhost.test(document.URL)) return;
+        addCount(Counter);
+      } else if (document.querySelectorAll('.post-title-link').length >= 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.4.0"></script><script src="/js/motion.js?v=7.4.0"></script>
+<script src="/js/schemes/muse.js?v=7.4.0"></script>
+<script src="/js/next-boot.js?v=7.4.0"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.4.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+
+  
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment-precise-range-plugin@1.3.0/moment-precise-range.min.js"></script>
+  <script>
+    function timer() {
+      var ages = moment.preciseDiff(moment(),moment(20181113,"YYYYMMDD"));
+      ages = ages.replace(/years?/, "年");
+      ages = ages.replace(/months?/, "月");
+      ages = ages.replace(/days?/, "天");
+      ages = ages.replace(/hours?/, "小时");
+      ages = ages.replace(/minutes?/, "分");
+      ages = ages.replace(/seconds?/, "秒");
+      ages = ages.replace(/\d+/g, '<span style="color:#1890ff">$&</span>');
+      div.innerHTML = `已运行 ${ages}`;
+    }
+    var div = document.createElement("div");
+    //插入到copyright之后
+    var copyright = document.querySelector(".copyright");
+    document.querySelector(".footer-inner").insertBefore(div, copyright.nextSibling);
+    timer();
+    setInterval("timer()",1000)
+  </script>
+
+
+
+
+  <script src="/js/activate-power-mode.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = true;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unjkp.com/valine/dist/Valine.min.js"></script>
+  <script src="/js/Valine.min.js"></script>
+
+  
+  
+  <script src="/js/Valine.min.js"></script>
+
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: true,
+        appId: 'rSJhP9lveekSUd49eUD4mYEV-gzGzoHsz',
+        appKey: 'lpRyKNs8gvdHGVDEdP3IBEAL',
+        placeholder: '说点什么？',
+        avatar:'retro',
+        guest_info:['nick','mail','link'] ,
+        pageSize:'10' || 10,
+    });
+    //增加以下六行代码去除 power by valine
+    var infoEle = document.querySelector('#comments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0){
+      infoEle.childNodes.forEach(function(item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+  </script>
+
+
+
+
+  
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("rSJhP9lveekSUd49eUD4mYEV-gzGzoHsz", "lpRyKNs8gvdHGVDEdP3IBEAL");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js" color="139,0,139"></script>
+  
+
+
+<script src="/live2d_models/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2d_models/","pluginJsPath":"lib/","pluginModelPath":"live2d-widget-model-miku/assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2d_models/live2d-widget-model-miku/assets/assets/miku.model.json"},"display":{"position":"left"},"mobile":{"show":false},"log":false});</script></body>
+
+</html>
+
+
+<script language="javascript" type="text/javascript" src="https://cdn.staticfile.org/jquery/1.7.2/jquery.min.js"></script>
+  <!-- 页面点击文字 -->
+  <script type="text/javascript" src="/js/click_show_text.js",></script>
+  <!-- 页面点击小红心 -->
+  <script type="text/javascript" src="/js/love.js"></script>
