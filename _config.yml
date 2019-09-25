@@ -121,3 +121,7 @@ symbols_count_time:
   total_symbols: true          # 站点总字数统计
   total_time: false             # 站点总阅读时长
   exclude_codeblock: false   
+
+# 站点地图
+sitemap:
+  path: sitemap.xml
