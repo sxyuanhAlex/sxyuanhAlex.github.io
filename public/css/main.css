@@ -1681,7 +1681,7 @@ article:last-child .post-eof {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #709413;
+  background: #ff9404;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2609,4 +2609,7 @@ div#posts.posts-expand .tag-cloud a {
   font-weight: 100;
   text-align: left;
   counter-reset: tags;
+}
+.live2d-widget-container {
+  opacity: 0.5 !important;
 }
