@@ -22,6 +22,8 @@
         <p class="site-subtitle">{{ subtitle }}</p>
       {%- endif %}
     {%- endif %}
+
+    
     {%- if theme.custom_logo and (theme.scheme === 'Gemini' or theme.scheme === 'Pisces') %}
       <a>
         <img class="custom-logo-image" src="{{ theme.custom_logo }}" alt="{{ title }}">

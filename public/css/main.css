@@ -399,6 +399,52 @@ body {
     width: 900px;
   }
 }
+.highlight-wrap {
+  position: relative;
+}
+.highlight-wrap:hover .copy-btn,
+.highlight-wrap .copy-btn:focus {
+  opacity: 1;
+}
+.copy-btn {
+  color: #333;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 700;
+  line-height: 1.6;
+  opacity: 0;
+  outline: 0;
+  padding: 2px 6px;
+  position: absolute;
+  transition: opacity 0.3s ease-in-out;
+  vertical-align: middle;
+  white-space: nowrap;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  color: #fff;
+  font-size: 14px;
+  right: 0;
+  top: 2px;
+}
+.highlight-wrap {
+  background: #21252b;
+  border-radius: 5px;
+  box-shadow: 0 10px 30px 0 rgba(0,0,0,0.4);
+  padding-top: 30px;
+}
+.highlight-wrap::before {
+  background: #fc625d;
+  border-radius: 50%;
+  box-shadow: 20px 0 #fdbc40, 40px 0 #35cd4b;
+  content: ' ';
+  height: 12px;
+  left: 12px;
+  margin-top: -20px;
+  position: absolute;
+  width: 12px;
+}
 pre,
 .highlight {
   background: #2d2d2d;
@@ -1681,7 +1727,7 @@ article:last-child .post-eof {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ff9404;
+  background: #123e09;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2612,4 +2658,20 @@ div#posts.posts-expand .tag-cloud a {
 }
 .live2d-widget-container {
   opacity: 0.5 !important;
+}
+code {
+  margin: 2px;
+  color: #cd3278;
+  background-color: rgba(249,242,244,0.533);
+  border-radius: 2px;
+}
+.highlight figcaption {
+  background: #2d2d2d;
+  border-bottom: 1px solid #111;
+}
+pre .deletion {
+  background: #dd6b3a;
+}
+pre .addition {
+  background: #518f7b;
 }

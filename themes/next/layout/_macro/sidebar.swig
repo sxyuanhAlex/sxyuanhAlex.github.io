@@ -47,6 +47,8 @@
           <span>0%</span>
         </div>
       {%- endif %}
+      {% include '../_custom/clock.swig' %}
+
       <script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=5r913oycw3y&amp;m=0c&amp;c=9d8b63&amp;cr1=0006ff&amp;f=arial&amp;l=33&amp;s=170&amp;cw=ffffff&amp;cb=000000" async="async"></script>
 
       <!--div id="music163player">

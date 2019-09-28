@@ -1,3 +1,5 @@
+
+
 {{ partial('_partials/header/brand.swig', {}, {cache: theme.cache.enable}) }}
 
 {%- set hasSearch = theme.algolia_search.enable or theme.local_search.enable %}

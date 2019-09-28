@@ -439,11 +439,11 @@ codeblock:
   highlight_theme: night eighties
   # Add copy button on codeblock
   copy_button:
-    enable: false
+    enable: true
     # Show text copy result.
-    show_result: false
+    show_result: true
     # Available values: default | flat | mac
-    style:
+    style: mac
 
 back2top:
   enable: true
@@ -670,14 +670,15 @@ valine:
   appkey: lpRyKNs8gvdHGVDEdP3IBEAL # your leancloud application appkey
   notify: true # mail notifier , https://github.com/xCss/Valine/wiki
   verify: false # Verification code
-  placeholder: 说点什么？ # comment box placeholder
-  avatar: retro # gravatar style
+  placeholder: Please leave your footprints # comment box placeholder
+  avatar: monsterid # gravatar style
   guest_info: nick,mail,link # custom comment header
   pageSize: 10 # pagination size
-  language: # Language, available values: en, zh-cn
+  language: en # Language, available values: en, zh-cn
   visitor: false # leancloud-counter-security is not supported for now. When visitor is set to be true, appid and appkey are recommended to be the same as leancloud_visitors' for counter compatibility. Article reading statistic https://valine.js.org/visitor.html
   comment_count: true # If false, comment count will only be displayed in post page, not in home page
   #post_meta_order: 0
+  avatar_cdn: https://www.gravatar.com/avatar/
 
 
 # LiveRe comments system
@@ -1170,3 +1171,6 @@ nightshift:
 #閲讀模式
 readmode:
   enable: true
+
+
+
