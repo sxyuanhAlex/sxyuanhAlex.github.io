@@ -3,6 +3,7 @@ layout: '[post]'
 title: mysql基础
 date: 2020-09-25 16:27:58
 tags: mysql
+categories: mysql
 ---
 
 # mysql
