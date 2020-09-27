@@ -101,7 +101,7 @@ git push origin v0.1.2 # 将v0.1.2标签提交到git服务器git push origin v0.
 
 2.git  checkout v0.21   此时会指向打v0.21标签时的代码状态，（但现在处于一个空的分支上）
 
-\3. cat  test.txt   查看某个文件
+3.cat  test.txt   查看某个文件
 
  
 
@@ -123,7 +123,7 @@ git diff --stat # 仅仅比较统计信息
 
 ## **查看提交记录**
 
-git log git log <file> # 查看该文件每次提交记录
+git log <file> # 查看该文件每次提交记录
 
 git log -p <file> # 查看每次详细修改内容的diff
 
@@ -131,7 +131,12 @@ git log -p -2 # 查看最近两次详细修改内容的diff
 
 git log --stat #查看提交统计信息
 
- 
+```
+git格式化日志(git hist)
+git config --global alias.hist 'log --pretty=format:"%C(auto)%h %ad | %C(auto)%s%d  %Cblue(%an)" --graph --date=short'
+```
+
+
 
 ## **tig**
 
