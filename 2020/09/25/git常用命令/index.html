@@ -73,7 +73,7 @@
 <meta property="og:site_name" content="⎝浪子yuanh⎠">
 <meta property="og:description" content="git查看、添加、提交、删除、找回，重置修改文件git help  # 显示command的helpgit show # 显示某次提交的内容 git show $idgit co –  # 抛弃工作区修改git co . # 抛弃工作区修改git add  # 将工作文件修改提交到本地暂存区git add . # 将所有修改过的工作文件提交暂存区">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-09-25T10:30:59.458Z">
+<meta property="og:updated_time" content="2020-09-27T06:41:48.861Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git常用命令">
 <meta name="twitter:description" content="git查看、添加、提交、删除、找回，重置修改文件git help  # 显示command的helpgit show # 显示某次提交的内容 git show $idgit co –  # 抛弃工作区修改git co . # 抛弃工作区修改git add  # 将工作文件修改提交到本地暂存区git add . # 将所有修改过的工作文件提交暂存区">
@@ -290,11 +290,19 @@
                 
               
 
-              <time title="创建时间：2020-09-25 18:00:28 / 修改时间：18:30:59" itemprop="dateCreated datePublished" datetime="2020-09-25T18:00:28+08:00">2020-09-25</time>
+              <time title="创建时间：2020-09-25 18:00:28" itemprop="dateCreated datePublished" datetime="2020-09-25T18:00:28+08:00">2020-09-25</time>
             </span>
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-27 14:41:48" itemprop="dateModified" datetime="2020-09-27T14:41:48+08:00">2020-09-27</time>
+              </span>
             
           
             <span class="post-meta-item">
@@ -342,7 +350,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>4k</span>
+              <span>4.2k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -403,17 +411,19 @@
 <p>注意：如果想看之前某个标签状态下的文件，可以这样操作</p>
 <p>1.git tag   查看当前分支下的标签</p>
 <p>2.git  checkout v0.21   此时会指向打v0.21标签时的代码状态，（但现在处于一个空的分支上）</p>
-<p>\3. cat  test.txt   查看某个文件</p>
+<p>3.cat  test.txt   查看某个文件</p>
 <h2 id="查看文件diff"><a href="#查看文件diff" class="headerlink" title="查看文件diff"></a><strong>查看文件diff</strong></h2><p>git diff <file> # 比较当前文件和暂存区文件差异 git diff</file></p>
 <p>git diff <id1><id1><id2> # 比较两次提交之间的差异</id2></id1></id1></p>
 <p>git diff <branch1>..<branch2> # 在两个分支之间比较</branch2></branch1></p>
 <p>git diff –staged # 比较暂存区和版本库差异</p>
 <p>git diff –cached # 比较暂存区和版本库差异</p>
 <p>git diff –stat # 仅仅比较统计信息</p>
-<h2 id="查看提交记录"><a href="#查看提交记录" class="headerlink" title="查看提交记录"></a><strong>查看提交记录</strong></h2><p>git log git log <file> # 查看该文件每次提交记录</file></p>
+<h2 id="查看提交记录"><a href="#查看提交记录" class="headerlink" title="查看提交记录"></a><strong>查看提交记录</strong></h2><p>git log <file> # 查看该文件每次提交记录</file></p>
 <p>git log -p <file> # 查看每次详细修改内容的diff</file></p>
 <p>git log -p -2 # 查看最近两次详细修改内容的diff</p>
 <p>git log –stat #查看提交统计信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git格式化日志(git hist)</span><br><span class="line">git config --global alias.hist &apos;log --pretty=format:&quot;%C(auto)%h %ad | %C(auto)%s%d  %Cblue(%an)&quot; --graph --date=short&apos;</span><br></pre></td></tr></table></figure>
+
 <h2 id="tig"><a href="#tig" class="headerlink" title="tig"></a><strong>tig</strong></h2><p>Mac上可以使用tig代替diff和log，<code>brew install tig</code></p>
 <h2 id="Git-本地分支管理-查看、切换、创建和删除分支"><a href="#Git-本地分支管理-查看、切换、创建和删除分支" class="headerlink" title="Git 本地分支管理 - 查看、切换、创建和删除分支"></a><strong>Git 本地分支管理 -</strong> <strong>查看、切换、创建和删除分支</strong></h2><p>git br -r # 查看远程分支</p>
 <p>git br <new_branch> # 创建新的分支</new_branch></p>
