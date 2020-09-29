@@ -132,8 +132,9 @@ git log -p -2 # 查看最近两次详细修改内容的diff
 git log --stat #查看提交统计信息
 
 ```
-git格式化日志(git hist)
-git config --global alias.hist 'log --pretty=format:"%C(auto)%h %ad | %C(auto)%s%d  %Cblue(%an)" --graph --date=short'
+git美化日志(git hist)
+git config --global alias.hist 'log --no-merges --color --stat --graph --date=iso --pretty=format:'%Cred%h%Creset - %Cgreen(%cd)%C(yellow)%d%Cblue %s %C(bold blue)<%an>%Creset' --abbrev-commit'
+git config --global alias.hist 'log --pretty=format:\"%Cred%h%Creset %ad %C(bold blue)%<(12)%an%Creset | %s%C(yellow)%d%Creset\" --graph --date=iso'
 ```
 
 
@@ -171,6 +172,50 @@ git br -d <branch> # 删除某个分支
 git br -D <branch> # 强制删除某个分支 (未被合并的分支被删除的时候需要强制)
 
  
+
+## **Cherry-pick 代码**
+
+cherry-pick是Git里对commit操作很好的一个指令，比如想把test分支中的其中多个commit merge到master，那么你需要挑你所需要的commit合到master，这时候就用cherry-pick来捡。
+
+```     |            
+|        C3
+|         |
+C1        C2
+|         |  test
+|        /
+|     /
+master
+```
+
+想将test分支中的C2 commit合并到master分支，丢弃C3的修改。
+
+直接merge会把C3也合并进去，这时用git cherry-pick可以解决问题
+
+- 先用git log查看，C2 commit的id，复制下来
+- git checkout 到master分支下
+- git cherry-pick <C2_id>
+
+如果cherry-pick过程没有出现冲突的话，那就是完成了合并，如下图所示
+
+```     |
+C4
+|  \         
+|    \   C3
+|      \ |
+C1        C2
+|        |  test
+|      /
+|    /
+master
+```
+
+如果出现冲突，
+
+- 先解决冲突
+- git add 将解决了冲突的文件添加到暂存区
+- git cherry-pick --continue就行
+
+
 
 ## **Git 本地分支管理 -** **分支合并和rebase**
 
