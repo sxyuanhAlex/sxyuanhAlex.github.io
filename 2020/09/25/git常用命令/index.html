@@ -73,7 +73,7 @@
 <meta property="og:site_name" content="⎝浪子yuanh⎠">
 <meta property="og:description" content="git查看、添加、提交、删除、找回，重置修改文件git help  # 显示command的helpgit show # 显示某次提交的内容 git show $idgit co –  # 抛弃工作区修改git co . # 抛弃工作区修改git add  # 将工作文件修改提交到本地暂存区git add . # 将所有修改过的工作文件提交暂存区">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-09-27T06:41:48.861Z">
+<meta property="og:updated_time" content="2020-09-29T08:44:58.103Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git常用命令">
 <meta name="twitter:description" content="git查看、添加、提交、删除、找回，重置修改文件git help  # 显示command的helpgit show # 显示某次提交的内容 git show $idgit co –  # 抛弃工作区修改git co . # 抛弃工作区修改git add  # 将工作文件修改提交到本地暂存区git add . # 将所有修改过的工作文件提交暂存区">
@@ -301,7 +301,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-27 14:41:48" itemprop="dateModified" datetime="2020-09-27T14:41:48+08:00">2020-09-27</time>
+                <time title="修改时间：2020-09-29 16:44:58" itemprop="dateModified" datetime="2020-09-29T16:44:58+08:00">2020-09-29</time>
               </span>
             
           
@@ -350,7 +350,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>4.2k</span>
+              <span>5k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -360,7 +360,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span>4 分钟</span>
+              <span>5 分钟</span>
             </span>
           
 
@@ -422,7 +422,7 @@
 <p>git log -p <file> # 查看每次详细修改内容的diff</file></p>
 <p>git log -p -2 # 查看最近两次详细修改内容的diff</p>
 <p>git log –stat #查看提交统计信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git格式化日志(git hist)</span><br><span class="line">git config --global alias.hist &apos;log --pretty=format:&quot;%C(auto)%h %ad | %C(auto)%s%d  %Cblue(%an)&quot; --graph --date=short&apos;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git美化日志(git hist)</span><br><span class="line">git config --global alias.hist &apos;log --no-merges --color --stat --graph --date=iso --pretty=format:&apos;%Cred%h%Creset - %Cgreen(%cd)%C(yellow)%d%Cblue %s %C(bold blue)&lt;%an&gt;%Creset&apos; --abbrev-commit&apos;</span><br><span class="line">git config --global alias.hist &apos;log --pretty=format:\&quot;%Cred%h%Creset %ad %C(bold blue)%&lt;(12)%an%Creset | %s%C(yellow)%d%Creset\&quot; --graph --date=iso&apos;</span><br></pre></td></tr></table></figure>
 
 <h2 id="tig"><a href="#tig" class="headerlink" title="tig"></a><strong>tig</strong></h2><p>Mac上可以使用tig代替diff和log，<code>brew install tig</code></p>
 <h2 id="Git-本地分支管理-查看、切换、创建和删除分支"><a href="#Git-本地分支管理-查看、切换、创建和删除分支" class="headerlink" title="Git 本地分支管理 - 查看、切换、创建和删除分支"></a><strong>Git 本地分支管理 -</strong> <strong>查看、切换、创建和删除分支</strong></h2><p>git br -r # 查看远程分支</p>
@@ -437,6 +437,25 @@
 <p>git co $id -b <new_branch> # 把某次历史提交记录checkout出来，创建成一个分支</new_branch></p>
 <p>git br -d <branch> # 删除某个分支</branch></p>
 <p>git br -D <branch> # 强制删除某个分支 (未被合并的分支被删除的时候需要强制)</branch></p>
+<h2 id="Cherry-pick-代码"><a href="#Cherry-pick-代码" class="headerlink" title="Cherry-pick 代码"></a><strong>Cherry-pick 代码</strong></h2><p>cherry-pick是Git里对commit操作很好的一个指令，比如想把test分支中的其中多个commit merge到master，那么你需要挑你所需要的commit合到master，这时候就用cherry-pick来捡。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">|        C3</span><br><span class="line">|         |</span><br><span class="line">C1        C2</span><br><span class="line">|         |  test</span><br><span class="line">|        /</span><br><span class="line">|     /</span><br><span class="line">master</span><br></pre></td></tr></table></figure>
+
+<p>想将test分支中的C2 commit合并到master分支，丢弃C3的修改。</p>
+<p>直接merge会把C3也合并进去，这时用git cherry-pick可以解决问题</p>
+<ul>
+<li>先用git log查看，C2 commit的id，复制下来</li>
+<li>git checkout 到master分支下</li>
+<li>git cherry-pick <c2_id></c2_id></li>
+</ul>
+<p>如果cherry-pick过程没有出现冲突的话，那就是完成了合并，如下图所示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">C4</span><br><span class="line">|  \         </span><br><span class="line">|    \   C3</span><br><span class="line">|      \ |</span><br><span class="line">C1        C2</span><br><span class="line">|        |  test</span><br><span class="line">|      /</span><br><span class="line">|    /</span><br><span class="line">master</span><br></pre></td></tr></table></figure>
+
+<p>如果出现冲突，</p>
+<ul>
+<li>先解决冲突</li>
+<li>git add 将解决了冲突的文件添加到暂存区</li>
+<li>git cherry-pick –continue就行</li>
+</ul>
 <h2 id="Git-本地分支管理-分支合并和rebase"><a href="#Git-本地分支管理-分支合并和rebase" class="headerlink" title="Git 本地分支管理 - 分支合并和rebase"></a><strong>Git 本地分支管理 -</strong> <strong>分支合并和rebase</strong></h2><p>git merge <branch> # 将branch分支合并到当前分支</branch></p>
 <p>git merge origin/master –no-ff # 不要Fast-Foward合并，这样可以生成merge提交</p>
 <p>git rebase master <branch> # 将master rebase到branch，相当于： git co <branch> &amp;&amp; git rebase master &amp;&amp; git co master &amp;&amp; git merge <branch></branch></branch></branch></p>
@@ -574,7 +593,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#git"><span class="nav-number">1.</span> <span class="nav-text">git</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查看、添加、提交、删除、找回，重置修改文件"><span class="nav-number">1.1.</span> <span class="nav-text">查看、添加、提交、删除、找回，重置修改文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-tag-—-标签相关操作"><span class="nav-number">1.2.</span> <span class="nav-text">git tag — 标签相关操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看文件diff"><span class="nav-number">1.3.</span> <span class="nav-text">查看文件diff</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看提交记录"><span class="nav-number">1.4.</span> <span class="nav-text">查看提交记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tig"><span class="nav-number">1.5.</span> <span class="nav-text">tig</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git-本地分支管理-查看、切换、创建和删除分支"><span class="nav-number">1.6.</span> <span class="nav-text">Git 本地分支管理 - 查看、切换、创建和删除分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git-本地分支管理-分支合并和rebase"><span class="nav-number">1.7.</span> <span class="nav-text">Git 本地分支管理 - 分支合并和rebase</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git补丁管理-方便在多台机器上开发同步时用"><span class="nav-number">1.8.</span> <span class="nav-text">Git补丁管理(方便在多台机器上开发同步时用)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git暂存管理"><span class="nav-number">1.9.</span> <span class="nav-text">Git暂存管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git远程分支管理"><span class="nav-number">1.10.</span> <span class="nav-text">Git远程分支管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git远程仓库管理"><span class="nav-number">1.11.</span> <span class="nav-text">Git远程仓库管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建远程仓库"><span class="nav-number">1.12.</span> <span class="nav-text">创建远程仓库</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#git"><span class="nav-number">1.</span> <span class="nav-text">git</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查看、添加、提交、删除、找回，重置修改文件"><span class="nav-number">1.1.</span> <span class="nav-text">查看、添加、提交、删除、找回，重置修改文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-tag-—-标签相关操作"><span class="nav-number">1.2.</span> <span class="nav-text">git tag — 标签相关操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看文件diff"><span class="nav-number">1.3.</span> <span class="nav-text">查看文件diff</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看提交记录"><span class="nav-number">1.4.</span> <span class="nav-text">查看提交记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tig"><span class="nav-number">1.5.</span> <span class="nav-text">tig</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git-本地分支管理-查看、切换、创建和删除分支"><span class="nav-number">1.6.</span> <span class="nav-text">Git 本地分支管理 - 查看、切换、创建和删除分支</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cherry-pick-代码"><span class="nav-number">1.7.</span> <span class="nav-text">Cherry-pick 代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git-本地分支管理-分支合并和rebase"><span class="nav-number">1.8.</span> <span class="nav-text">Git 本地分支管理 - 分支合并和rebase</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git补丁管理-方便在多台机器上开发同步时用"><span class="nav-number">1.9.</span> <span class="nav-text">Git补丁管理(方便在多台机器上开发同步时用)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git暂存管理"><span class="nav-number">1.10.</span> <span class="nav-text">Git暂存管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git远程分支管理"><span class="nav-number">1.11.</span> <span class="nav-text">Git远程分支管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git远程仓库管理"><span class="nav-number">1.12.</span> <span class="nav-text">Git远程仓库管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建远程仓库"><span class="nav-number">1.13.</span> <span class="nav-text">创建远程仓库</span></a></li></ol></li></ol></div>
         
       </div>
       <!--/noindex-->
@@ -960,7 +979,7 @@ if(canvas.getContext){
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">28k</span>
+    <span title="站点总字数">29k</span>
 </div>
 
         

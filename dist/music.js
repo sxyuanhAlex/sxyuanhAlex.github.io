@@ -6,26 +6,14 @@ const ap = new APlayer({
       {
         name: 'Viva La Vida',
         artist: 'Coldplay',
-        url: 'https://rp01-sycdn.kuwo.cn/3029abd00c169165c80652c91fa389fa/5d8e38ae/resource/n2/26/66/3590184758.mp3',
+        url: 'https://ne01-sycdn.kuwo.cn/25abffcb90b9f3da1095c8442e6b515c/5fadf981/resource/n3/75/73/1831346646.mp3',
         cover: 'http://img2.sycdn.kuwo.cn/star/albumcover/300/90/80/2251451924.jpg',
-      },
-      {
-        name: '常夜灯',
-        artist: '玉置浩二',
-        url: 'https://win-web-ra01-sycdn.kuwo.cn/c3336f679a957936e4704b8c36311687/5d8e3959/resource/n1/128/60/9/2438811764.mp3',
-        cover: 'http://img3.kuwo.cn/star/albumcover/300/40/13/1229638794.jpg',
       },
       {
         name: 'In This River',
         artist: 'Black Label Society',
-        url: 'https://win-web-rg01-sycdn.kuwo.cn/dfb5ea87599ab569b47c901bab065f60/5d8e3676/resource/n1/66/41/1809995527.mp3',
+        url: 'https://win-web-rb01-sycdn.kuwo.cn/ae13c6ddcfa82740bb22eb1ed9e621db/5fadf800/resource/n3/98/11/1729172873.mp3',
         cover: 'http://img1.kuwo.cn/star/albumcover/300/82/19/2916131621.jpg',
-      },
-      {
-        name: '融化',
-        artist: '梁博',
-        url: 'https://win-web-rg01-sycdn.kuwo.cn/3e57e876391030429e6883dfcdcef995/5d8e3fb4/resource/n3/12/78/2938450662.mp3',
-        cover: 'http://img4.kuwo.cn/star/albumcover/120/86/67/1941541207.jpg',
       }
     ]
     
